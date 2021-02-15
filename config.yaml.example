@@ -64,7 +64,11 @@ manager:
       args:
         mac: 00:11:22:33:44:55
         topic_prefix: linak_desk
+        desk_offset_cm: -5 # Normally linak driver returns higher value than should be
+        min_height_cm: 64
+        max_height_cm: 128
       update_interval: 1800
+      topic_subscription: linak_desk/set_height
     miflora:
       args:
         devices:

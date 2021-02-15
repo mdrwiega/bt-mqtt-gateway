@@ -120,7 +120,7 @@ class WorkersManager:
                         )
                     )
             elif hasattr(worker_obj, "run"):
-                _LOGGER.debug("Registered %s as daemon", repr(worker_obj))
+                _LOGGER.info("Registered %s as daemon", repr(worker_obj))
                 self._daemons.append(worker_obj)
             else:
                 raise "%s cannot be initialized, it has to define run or status_update method" % worker_name

@@ -21,6 +21,8 @@ class LinakdeskWorker(BaseWorker):
 
         self.desk = LinakDesk(self.mac)
 
+        _LOGGER.info("Created LinakDesk worker")
+
     def status_update(self):
         return [
             MqttMessage(
@@ -41,7 +43,7 @@ class LinakdeskWorker(BaseWorker):
         ):
             try:
                 self.desk.read_dpg_data()
-                return self.desk.current_height_with_offset.cm
+                return self.desk.current_height_with_offset.cm + self.desk_offset_cm
             except btle.BTLEException as e:
                 logger.log_exception(
                     _LOGGER,
@@ -52,3 +54,10 @@ class LinakdeskWorker(BaseWorker):
                     suppress=True,
                 )
                 raise DeviceTimeoutError
+
+    def on_command(self, topic, value):
+        target_height = float(value)
+
+        if target_height >= self.min_height_cm and target_height <= self.max_height_cm:
+            _LOGGER.info("Start moving desk to the target height: %.1f", target_height)
+            self.desk.move_to_cm(target_height - self.desk_offset_cm)
